@@ -2086,7 +2086,16 @@ class SphinxRenderer:
                 declarator.append(nodes.Text(" "))
                 declarator.extend(self.render(node.initializer))
 
-        return self.handle_declaration(node, declaration, declarator_callback=add_definition)
+        def content(contentnode) -> None:
+            if node.location and node.location.file:
+                text = "#include <" + node.location.file + ">"
+                contentnode += nodes.emphasis("", nodes.Text(text))
+            contentnode.extend(self.description(node))
+
+        nodes_ = self.handle_declaration(
+            node, declaration, declarator_callback=add_definition, content_callback=content
+        )
+        return nodes_
 
     def visit_enum(self, node) -> List[Node]:
         def content(contentnode):
@@ -2140,7 +2149,17 @@ class SphinxRenderer:
             #   definition has only the typename, which makes it impossible to
             #   distinguish between them so fallback to "typedef" behavior here.
             declaration = " ".join([type_, name, node.get_argsstring()])
-        return self.handle_declaration(node, declaration)
+
+        def content(contentnode) -> None:
+            if node.location and node.location.file:
+                text = "#include <" + node.location.file + ">"
+                contentnode += nodes.emphasis("", nodes.Text(text))
+            contentnode.extend(self.description(node))
+
+        nodes_ = self.handle_declaration(
+            node, declaration, content_callback=content
+        )
+        return nodes_
 
     def make_initializer(self, node) -> str:
         initializer = node.initializer
