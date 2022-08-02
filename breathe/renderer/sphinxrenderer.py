@@ -2002,9 +2002,11 @@ class SphinxRenderer:
                 declaration = " ".join(elements)
 
             def content(contentnode) -> None:
-                if node.location and node.location.file:
-                    text = "#include <" + node.location.file + ">"
-                    contentnode += nodes.emphasis("", nodes.Text(text))
+                if self.app.env.config.breathe_show_decl_file_include:
+                    if node.location and node.location.file:
+                        text = "#include <" + node.location.file + ">"
+                        contentnode += nodes.emphasis("", nodes.Text(text))
+
                 contentnode.extend(self.description(node))
 
             nodes_ = self.handle_declaration(
@@ -2087,9 +2089,11 @@ class SphinxRenderer:
                 declarator.extend(self.render(node.initializer))
 
         def content(contentnode) -> None:
-            if node.location and node.location.file:
-                text = "#include <" + node.location.file + ">"
-                contentnode += nodes.emphasis("", nodes.Text(text))
+            if self.app.env.config.breathe_show_decl_file_include:
+                if node.location and node.location.file:
+                    text = "#include <" + node.location.file + ">"
+                    contentnode += nodes.emphasis("", nodes.Text(text))
+
             contentnode.extend(self.description(node))
 
         nodes_ = self.handle_declaration(
@@ -2151,9 +2155,11 @@ class SphinxRenderer:
             declaration = " ".join([type_, name, node.get_argsstring()])
 
         def content(contentnode) -> None:
-            if node.location and node.location.file:
-                text = "#include <" + node.location.file + ">"
-                contentnode += nodes.emphasis("", nodes.Text(text))
+            if self.app.env.config.breathe_show_decl_file_include:
+                if node.location and node.location.file:
+                    text = "#include <" + node.location.file + ">"
+                    contentnode += nodes.emphasis("", nodes.Text(text))
+
             contentnode.extend(self.description(node))
 
         nodes_ = self.handle_declaration(
