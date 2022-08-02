@@ -2000,7 +2000,16 @@ class SphinxRenderer:
                 elements.append(name)
                 elements.append(node.get_argsstring())
                 declaration = " ".join(elements)
-            nodes_ = self.handle_declaration(node, declaration)
+
+            def content(contentnode) -> None:
+                if node.location and node.location.file:
+                    text = "#include <" + node.location.file + ">"
+                    contentnode += nodes.emphasis("", nodes.Text(text))
+                contentnode.extend(self.description(node))
+
+            nodes_ = self.handle_declaration(
+                node, declaration, content_callback=content
+            )
             return nodes_
         else:
             # Get full function signature for the domain directive.
